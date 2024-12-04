@@ -1,0 +1,236 @@
+
+
+CREATE TABLE IF NOT EXISTS Usuario (
+	id_usuario INTEGER PRIMARY KEY AUTOINCREMENT,
+  	nome TEXT,
+  	telefone INTEGER,
+  	email TEXT,
+  	nota REAL,
+  	cpf INTEGER
+);
+
+CREATE TABLE IF NOT EXISTS Cliente (
+  id_usuario INTEGER,
+  orcamento REAL,
+  PRIMARY KEY (id_usuario),
+  FOREIGN KEY (id_usuario) REFERENCES Usuario(id_usuario)
+  			ON DELETE CASCADE
+  			ON UPDATE CASCADE
+  );
+  
+  CREATE TABLE IF NOT EXISTS Freelancer (
+    id_usuario INTEGER,
+    disponibilidade INTEGER,
+    PRIMARY KEY (id_usuario),
+    FOREIGN KEY (id_usuario) REFERENCES Usuario(id_usuario)
+              ON DELETE CASCADE
+              ON UPDATE CASCADE
+  );
+  
+  CREATE TABLE IF NOT EXISTS Certificacao (
+    id_certificacao INTEGER PRIMARY KEY AUTOINCREMENT,
+    nome TEXT,
+    instituicao TEXT
+    );
+    
+   CREATE TABLE IF NOT EXISTS Freelancer_Certificacao (
+     id_usuario INTEGER,
+     id_certificacao INTEGER,
+     PRIMARY KEY (id_usuario, id_certificacao)
+     FOREIGN KEY (id_usuario) REFERENCES Usuario(id_usuario)
+     foreign key (id_certificacao) references Certificacao(id_certificacao)
+     );
+     
+     CREATE TABLE IF NOT EXISTS Habilidade (
+       id_habilidade INTEGER PRIMARY KEY AUTOINCREMENT,
+       nome TEXT
+       );
+       
+     CREATE TABLE IF NOT EXISTS Freelancer_habilidade (
+     	id_usuario INTEGER,
+     	id_habilidade INTEGER,
+    	PRIMARY KEY (id_usuario, id_habilidade)
+     	FOREIGN KEY (id_usuario) REFERENCES Usuario(id_usuario)
+     	foreign key (id_habilidade) references Habilidade(id_habilidade)
+     );
+     
+    CREATE TABLE IF NOT EXISTS Projeto (
+      id_projeto INTEGER PRIMARY KEY AUTOINCREMENT,
+      titulo TEXT,
+      descricao TEXT,
+      status TEXT, 
+      id_cliente INTEGER,
+      FOREIGN KEY (id_cliente) REFERENCES Cliente(id_usuario)
+    		ON DELETE RESTRICT
+      		ON UPDATE CASCADE
+    );
+    
+    CREATE TABLE IF NOT EXISTS Avaliacao (
+      id_projeto INTEGER,
+      id_cliente INTEGER,
+      id_freelancer INTEGER,
+      avaliacacao TEXT,
+      PRIMARY KEY ( id_projeto, id_cliente),
+      FOREIGN KEY (id_projeto) REFERENCES Projeto(id_projeto)
+      			ON DELETE CASCADE
+      			ON UPDATE CASCADE
+      FOREIGN KEY (id_cliente) REFERENCES Cliente(id_usuario)
+      			ON DELETE RESTRICT
+      			ON UPDATE CASCADE
+      FOREIGN KEY (id_freelancer) REFERENCES Freelancer(id_usuario)
+      			ON DELETE RESTRICT
+      			ON UPDATE CASCADE
+      );
+      
+      Create TABLE IF NOT EXISTS Tarefa (
+        id_projeto INTEGER,
+        descricao TEXT,
+        prazo DATE,
+        status TEXT,
+        FOREIGN KEY (id_projeto) REFERENCES Projeto(id_projeto)
+        		ON DELETE CASCADE
+        		ON UPDATE CASCADE
+        );
+      
+      CREATE TABLE IF NOT EXISTS Categoria (
+        id_categoria INTEGER PRIMARY KEY AUTOINCREMENT,
+        nome TEXT,
+        descricao TEXT
+        );
+        
+        CREATE TABLE IF NOT EXISTS Projeto_Categoria (
+          id_projeto INTEGER,
+          id_categoria INTEGER,
+          FOREIGN KEY (id_projeto) REFERENCES Projeto(id_projeto),
+          FOREIGN KEY (id_categoria) REFERENCES Categoria(id_categoria)
+          );
+          
+          CREATE TABLE IF NOT EXISTS Pagamento (
+            id_pagamento INTEGER PRIMARY KEY AUTOINCREMENT,
+            valor REAL,
+            status TEXT,
+            data DATE,
+            id_projeto INTEGER,
+            FOREIGN KEY (id_projeto) REFERENCES Projeto(id_projeto)
+            		ON DELETE RESTRICT
+            		ON UPDATE CASCADE
+            );
+            
+            CREATE TABLE IF NOT EXISTS Freelancer_Projeto (
+              id_projeto INTEGER,
+              id_freelancer INTEGER,
+              PRIMARY KEY (id_projeto, id_freelancer),
+              FOREIGN KEY (id_projeto) REFERENCES Projeto(id_projeto),
+              FOREIGN KEY (id_freelancer) REFERENCES Freelancer(id_usuario)
+              );
+              
+              CREATE TABLE IF NOT EXISTS Indica (
+                id_freelancer INTEGER,
+                id_freelancer_indicado INTEGER,
+                FOREIGN KEY (id_freelancer) REFERENCES Freelancer(id_usuario),
+                FOREIGN KEY (id_freelancer_indicado) REFERENCES Freelancer(id_usuario)
+                );
+
+     
+ INSERT INTO Usuario (nome, telefone, email, nota, cpf) VALUES
+('Carlos Silva', 123456789, 'carlos@example.com', 4.5, 11111111111),
+('Ana Souza', 987654321, 'ana@example.com', 4.8, 22222222222),
+('Pedro Oliveira', 456123789, 'pedro@example.com', 4.2, 33333333333),
+('Maria Ferreira', 789456123, 'maria@example.com', 4.9, 44444444444),
+('Lucas Mendes', 321654987, 'lucas@example.com', 4.1, 55555555555),
+('Mariana Costa', 159357486, 'mariana@example.com', 4.7, 66666666666),
+('João Almeida', 951753852, 'joao@example.com', 3.9, 77777777777),
+('Isabela Lima', 753951258, 'isabela@example.com', 4.6, 88888888888),
+('Rafael Santos', 852456159, 'rafael@example.com', 4.3, 99999999999),
+('Bianca Ramos', 456789123, 'bianca@example.com', 4.8, 10101010101);
+
+INSERT INTO Cliente (id_usuario, orcamento) VALUES
+(1, 10000),
+(3, 15000),
+(5, 20000),
+(7, 8000),
+(9, 12000);
+
+INSERT INTO Freelancer (id_usuario, disponibilidade) VALUES
+(2, 40),
+(4, 30),
+(6, 50),
+(8, 20),
+(10, 35);
+
+INSERT INTO Certificacao (nome, instituicao) VALUES
+('Web Development', 'Coursera'),
+('Data Science', 'Udemy'),
+('Project Management', 'edX'),
+('Graphic Design', 'LinkedIn Learning'),
+('AI Basics', 'Harvard Online');
+
+INSERT INTO Freelancer_Certificacao (id_usuario, id_certificacao) VALUES
+(2, 1),
+(4, 2),
+(6, 3),
+(8, 4),
+(10, 5);
+
+INSERT INTO Habilidade (nome) VALUES
+('Python'),
+('JavaScript'),
+('Project Management'),
+('Graphic Design'),
+('Machine Learning');
+
+
+INSERT INTO Freelancer_Habilidade (id_usuario, id_habilidade) VALUES
+(2, 1),
+(4, 2),
+(6, 3),
+(8, 4),
+(10, 5);
+
+INSERT INTO Projeto (titulo, descricao, status, id_cliente) VALUES
+('Website Redesign', 'Redesign the company website', 'In Progress', 1),
+('Data Analysis Project', 'Analyze sales data', 'Completed', 3),
+('Marketing Campaign', 'Launch new product campaign', 'Pending', 5),
+('Logo Design', 'Create a new logo', 'In Progress', 7),
+('AI Research', 'Develop AI model', 'Pending', 9);
+
+INSERT INTO Avaliacao (id_projeto, id_cliente, id_freelancer, avaliacacao) VALUES
+(1, 1, 2, 'Excellent work, very satisfied'),
+(2, 3, 4, 'Good analysis, on time'),
+(3, 5, 6, 'Campaign plan well-structured'),
+(4, 7, 8, 'Logo design exceeded expectations'),
+(5, 9, 10, 'Model development was thorough and detailed');
+
+INSERT INTO Tarefa (id_projeto, descricao, prazo, status) VALUES
+(1, 'Design homepage', '2024-08-15', 'In Progress'),
+(2, 'Clean and preprocess data', '2024-07-30', 'Completed'),
+(3, 'Plan campaign strategy', '2024-09-01', 'Pending'),
+(4, 'Sketch initial designs', '2024-08-05', 'In Progress'),
+(5, 'Train AI model', '2024-09-20', 'Pending');
+
+INSERT INTO Categoria (nome, descricao) VALUES
+('Technology', 'Projects related to software and technology'),
+('Design', 'Design and creative projects'),
+('Marketing', 'Marketing and advertising campaigns');
+
+INSERT INTO Pagamento (valor, status, data, id_projeto) VALUES
+(5000, 'Paid', '2024-07-10', 1),
+(7500, 'Pending', '2024-07-25', 2),
+(10000, 'Paid', '2024-08-01', 3),
+(2000, 'Pending', '2024-08-10', 4),
+(12000, 'Pending', '2024-09-15', 5);
+
+INSERT INTO Freelancer_Projeto (id_projeto, id_freelancer) VALUES
+(1, 2),
+(2, 4),
+(3, 6),
+(4, 8),
+(5, 10);
+
+INSERT INTO Indica (id_freelancer, id_freelancer_indicado) VALUES
+(2, 4),
+(4, 6),
+(6, 8),
+(8, 10),
+(10, 2);
+  
